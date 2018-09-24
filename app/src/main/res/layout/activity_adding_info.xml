@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".AddingInfo">
 
     <Spinner
@@ -75,6 +78,7 @@
             android:hint="@string/edittext_hint"
             android:textSize="20sp"
             android:gravity="top|left"
+
             android:inputType="textMultiLine"
             android:minLines="5" />
     </android.support.design.widget.TextInputLayout>

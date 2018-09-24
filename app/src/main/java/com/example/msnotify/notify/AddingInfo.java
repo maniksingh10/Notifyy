@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -53,13 +54,19 @@ public class AddingInfo extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     private void done() {
         String not = editText.getText().toString();
         String bra = spinner.getSelectedItem().toString();
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+        radioButton = (RadioButton) findViewById(selectedId);
 
-        if (bra.isEmpty() || radioGroup.isSelected()|| not.isEmpty()){
+        if (bra.isEmpty() || not.isEmpty()|| selectedId == -1){
             Snackbar snackbar = Snackbar.make(getCurrentFocus(),"Error",Snackbar.LENGTH_LONG);
             View snackBarView = snackbar.getView();
             snackBarView.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.colorAccent));
@@ -68,14 +75,12 @@ public class AddingInfo extends AppCompatActivity {
 
 
         }else{
+            String yer = radioButton.getText().toString();
             String sdate =new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
 
-            int selectedId = radioGroup.getCheckedRadioButtonId();
-            radioButton = (RadioButton) findViewById(selectedId);
-            String yer = radioButton.getText().toString();
 
             String key = databaseReference.push().getKey();
-            Info info = new Info(yer, not, bra, "Manik",sdate);
+            Info info = new Info(yer, not, bra, FirebaseAuth.getInstance().getCurrentUser().getEmail(),sdate);
             databaseReference.child(key).setValue(info);
 
             Intent returnIntent = new Intent();

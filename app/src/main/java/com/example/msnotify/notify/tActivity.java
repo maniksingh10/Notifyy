@@ -11,17 +11,31 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class tActivity extends AppCompatActivity  {
 
     private View parent;
+    private Button loogout;
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_t);
+        firebaseAuth=FirebaseAuth.getInstance();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         parent = findViewById(R.id.root);
+        loogout=findViewById(R.id.logout);
+        loogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                finish();
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +70,8 @@ public class tActivity extends AppCompatActivity  {
             }
         }
     }
+
+
 }
 
 

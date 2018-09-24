@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -61,6 +62,7 @@ public class sact extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Snackbar.make(getCurrentFocus(),"Notice Update",Snackbar.LENGTH_SHORT).show();
                 infoList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Info info = snapshot.getValue(Info.class);

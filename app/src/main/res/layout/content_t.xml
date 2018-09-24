@@ -8,9 +8,9 @@
     tools:context=".tActivity"
     tools:showIn="@layout/activity_t">
 
-   <TextView
+   <Button
+       android:id="@+id/logout"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:textSize="50sp"
-       android:text="HEloooo"/>
+       android:text="Log OUT" />
 </android.support.constraint.ConstraintLayout>
