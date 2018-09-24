@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,25 +47,28 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Info info= list.get(i);
         viewHolder.tvname.setText(info.gettName());
         viewHolder.tvbra.setText(info.getBranch());
         viewHolder.tvdate.setText(info.getDate());
         viewHolder.tvyear.setText(info.getYear());
         viewHolder.tvdes.setText(info.getNotice());
+        Glide.with(context).load(info.getUrl()).into(viewHolder.itemIimage);
 
-        final boolean isExpanded = i==mExpandedPosition;
-        viewHolder.tvdes.setVisibility(isExpanded?View.VISIBLE:View.GONE);
-
+        final int a= viewHolder.getAdapterPosition();
+        final boolean isExpanded = a==mExpandedPosition;
+        viewHolder.itemIimage.setVisibility(isExpanded?View.VISIBLE:View.GONE);
+        viewHolder.tvdes.setVisibility(isExpanded?View.GONE:View.VISIBLE);
         viewHolder.itemView.setActivated(isExpanded);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mExpandedPosition = !isExpanded ? i : -1;
-                notifyItemChanged(i);
+                mExpandedPosition = !isExpanded ? a : -1;
+                notifyItemChanged(a);
             }
         });
+
 
     }
 
@@ -81,6 +85,7 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
         TextView tvname;
         TextView tvdes;
         TextView tvyear;
+        ImageView itemIimage;
 
         public ViewHolder(View v) {
             super(v);
@@ -89,6 +94,7 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
             tvname = v.findViewById(R.id.tvname);
             tvdes = v.findViewById(R.id.tvmain);
             tvyear = v.findViewById(R.id.tvyear);
+            itemIimage = v.findViewById(R.id.itemimg);
 
         }
     }

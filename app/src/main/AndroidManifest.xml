@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".tActivity"
-            android:label="@string/title_activity_t"
+            android:label="Teachers"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
