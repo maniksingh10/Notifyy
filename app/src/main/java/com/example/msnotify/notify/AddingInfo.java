@@ -10,16 +10,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -34,6 +27,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,10 +36,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 public class AddingInfo extends AppCompatActivity {
 
@@ -56,14 +56,15 @@ public class AddingInfo extends AppCompatActivity {
     private RadioButton radioButton;
     private String date = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault()).format(new Date());
     private Button upload;
-    private static final int PICK_IMAGE_REQUEST = 234;
     private Uri filePath;
     private StorageReference storageReference;
     private String url;
     private ImageView imageView;
     private View root;
     private ProgressDialog progressDialog;
-    private final int PICK_IMAGE_CAMERA = 1, PICK_IMAGE_GALLERY = 2;
+    private final int PICK_IMAGE_GALLERY = 2;
+    private String pictureFilePath;
+    static final int REQUEST_PICTURE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +95,11 @@ public class AddingInfo extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //showFileChooser();
+
                 selectImage();
             }
         });
     }
-
 
     private void selectImage() {
         try {
@@ -114,8 +114,29 @@ public class AddingInfo extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         if (options[item].equals("Take Photo")) {
                             dialog.dismiss();
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, PICK_IMAGE_CAMERA);
+                            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                            cameraIntent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
+                            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+//                                startActivityForResult(cameraIntent, REQUEST_PICTURE_CAPTURE);
+
+                                File pictureFile = null;
+                                try {
+                                    pictureFile = getPictureFile();
+                                } catch (IOException ex) {
+                                    Toast.makeText(AddingInfo.this,
+                                            "Photo file can't be created, please try again",
+                                            Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                if (pictureFile != null) {
+                                    Uri photoURI = FileProvider.getUriForFile(AddingInfo.this,
+                                            getApplicationContext().getPackageName() + ".fileprovider",
+                                            pictureFile);
+                                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                    startActivityForResult(cameraIntent, REQUEST_PICTURE_CAPTURE);
+                                }
+                            }
+
                         } else if (options[item].equals("Choose From Gallery")) {
                             dialog.dismiss();
                             Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -134,19 +155,42 @@ public class AddingInfo extends AppCompatActivity {
         }
     }
 
+    private File getPictureFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+        String pictureFile = "Manik_" + timeStamp;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(pictureFile, ".jpg", storageDir);
+        pictureFilePath = image.getAbsolutePath();
+        return image;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_GALLERY && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            filePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                imageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Bitmap bitmap;
+        switch (requestCode) {
+            case PICK_IMAGE_GALLERY:
+                if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    filePath = data.getData();
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                        imageView.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case REQUEST_PICTURE_CAPTURE:
+                File imgFile = new File(pictureFilePath);
+                if (imgFile.exists()) {
+                    filePath = Uri.fromFile(imgFile);
+                    imageView.setImageURI(Uri.fromFile(imgFile));
+                }
+                break;
+
+
         }
+
     }
 
 
@@ -213,13 +257,6 @@ public class AddingInfo extends AppCompatActivity {
 
     }
 
-
-    private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
 
     private void showError() {
         progressDialog.dismiss();

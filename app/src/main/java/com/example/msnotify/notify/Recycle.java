@@ -1,13 +1,19 @@
 package com.example.msnotify.notify;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -67,6 +73,8 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
 
 
     }
+
+
 
     @Override
     public int getItemCount() {
