@@ -1,16 +1,24 @@
 package com.example.msnotify.notify;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -25,15 +33,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -58,7 +62,8 @@ public class AddingInfo extends AppCompatActivity {
     private String url;
     private ImageView imageView;
     private View root;
-private      ProgressDialog progressDialog ;
+    private ProgressDialog progressDialog;
+    private final int PICK_IMAGE_CAMERA = 1, PICK_IMAGE_GALLERY = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,32 +85,60 @@ private      ProgressDialog progressDialog ;
             @Override
             public void onClick(View v) {
 
-                progressDialog.setTitle("Wait");
+                progressDialog.setTitle("Sending Notice to Students");
                 progressDialog.show();
-                uploadFile();
+                done();
             }
         });
 
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFileChooser();
+                //showFileChooser();
+                selectImage();
             }
         });
     }
 
 
-    private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    private void selectImage() {
+        try {
+            PackageManager pm = getPackageManager();
+            int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
+            if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+                final CharSequence[] options = {"Take Photo", "Choose From Gallery", "Cancel"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddingInfo.this);
+                builder.setTitle("Select Option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, PICK_IMAGE_CAMERA);
+                        } else if (options[item].equals("Choose From Gallery")) {
+                            dialog.dismiss();
+                            Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(pickPhoto, PICK_IMAGE_GALLERY);
+                        } else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+            } else
+                Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_IMAGE_GALLERY && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
@@ -116,18 +149,11 @@ private      ProgressDialog progressDialog ;
         }
     }
 
-    public String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
 
     private void uploadFile() {
         //checking if file is available
         if (filePath != null) {
             //displaying progress dialog while image is uploading
-
 
             //getting the storage reference
             final StorageReference sRef = storageReference.child(FConssnts.STORAGE_PATH_UPLOADS + System.currentTimeMillis() + "." + getFileExtension(filePath));
@@ -147,7 +173,18 @@ private      ProgressDialog progressDialog ;
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         url = downloadUri.toString();
-                        done();
+                        int selectedId = radioGroup.getCheckedRadioButtonId();
+                        radioButton = (RadioButton) findViewById(selectedId);
+                        String yer = radioButton.getText().toString();
+                        String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
+
+                        String key = databaseReference.push().getKey();
+                        Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                        databaseReference.child(key).setValue(info);
+
+                        Intent returnIntent = new Intent();
+                        setResult(Activity.RESULT_OK, returnIntent);
+                        finish();
                         progressDialog.dismiss();
                     } else {
                         Toast.makeText(AddingInfo.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -157,7 +194,8 @@ private      ProgressDialog progressDialog ;
 
         } else {
             //display an error if no file is selected
-progressDialog.dismiss();
+            progressDialog.dismiss();
+            showError();
         }
     }
 
@@ -166,35 +204,43 @@ progressDialog.dismiss();
         String not = editText.getText().toString();
         String bra = spinner.getSelectedItem().toString();
         int selectedId = radioGroup.getCheckedRadioButtonId();
-        radioButton = (RadioButton) findViewById(selectedId);
 
         if (bra.isEmpty() || not.isEmpty() || selectedId == -1) {
-            progressDialog.dismiss();
-            Snackbar snackbar = Snackbar.make(root, "Error", Snackbar.LENGTH_LONG);
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.colorAccent));
-            snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            snackbar.show();
-
+            showError();
         } else {
-            String yer = radioButton.getText().toString();
-            String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
-
-            String key = databaseReference.push().getKey();
-            Info info = new Info(yer, not, bra, FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
-            databaseReference.child(key).setValue(info);
-
-            Intent returnIntent = new Intent();
-            setResult(Activity.RESULT_OK, returnIntent);
-            finish();
+            uploadFile();
         }
+
     }
 
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    private void showError() {
+        progressDialog.dismiss();
+        Snackbar snackbar = Snackbar.make(root, "Error", Snackbar.LENGTH_LONG);
+        View snackBarView = snackbar.getView();
+        snackBarView.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.colorAccent));
+        snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        snackbar.show();
+    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
+
+    public String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
 
 }
