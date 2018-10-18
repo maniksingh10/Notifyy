@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="#64b5f6"
+
     app:cardCornerRadius="8dp"
-    android:layout_height="wrap_content"
-    app:cardElevation="8dp">
+    android:layout_height="130dp"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,6 +24,7 @@
             android:layout_marginTop="8dp"
             android:maxLength="9"
             android:text="Date"
+            android:fontFamily="@font/gmedium"
             android:textSize="17sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,6 +36,7 @@
             android:layout_marginEnd="6dp"
             android:layout_marginTop="2dp"
             android:text="1st Year"
+            android:fontFamily="@font/gregular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvbracnh" />
 
@@ -45,6 +47,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="6dp"
             android:text="Computer"
+            android:fontFamily="@font/gregular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,6 +60,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="TextView"
+            android:fontFamily="@font/googlesansbold"
             app:layout_constraintBottom_toTopOf="@+id/tvname"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +75,7 @@
             android:layout_marginEnd="6dp"
             android:layout_marginTop="40dp"
             android:text="Manik "
+            android:fontFamily="@font/gregular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvyear"
