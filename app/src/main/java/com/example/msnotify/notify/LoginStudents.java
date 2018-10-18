@@ -1,8 +1,12 @@
 package com.example.msnotify.notify;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -22,6 +26,8 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,24 +49,46 @@ public class LoginStudents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_students);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         firebaseAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(this);
         nickname_et = findViewById(R.id.username);
         course_et = findViewById(R.id.spinner2);
         mobile_et = findViewById(R.id.phone);
         send_bt = findViewById(R.id.sendcodebt);
-        progressBar = findViewById(R.id.progressBar);
+
         root = findViewById(R.id.studentsroot);
 
         send_bt.setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View v) {
-                                           progressBar.setVisibility(View.VISIBLE);
+
                                            saveInfo();
                                        }
                                    }
         );
+
+        mobile_et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(s.length() == 10){
+                    send_bt.setEnabled(true);
+                }else{
+                    send_bt.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
 
@@ -71,10 +99,10 @@ public class LoginStudents extends AppCompatActivity {
 
         if(name.isEmpty() ||couse.isEmpty()||mobile.isEmpty() ){
             showError();
-            progressBar.setVisibility(View.GONE);
+
         } else{
             sendverifycode("+91"+mobile);
-            progressBar.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -92,25 +120,34 @@ public class LoginStudents extends AppCompatActivity {
         signinwiithcreditndial(phoneAuthCredential);
     }
 
+
     private void signinwiithcreditndial(PhoneAuthCredential phoneAuthCredential) {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete( Task<AuthResult> task) {
 
-                String name= nickname_et.getText().toString();
-                String couse = course_et.getSelectedItem().toString();
-                String mobile = mobile_et.getText().toString();
+                final String name= nickname_et.getText().toString();
+                final String couse = course_et.getSelectedItem().toString();
+                final String mobile = mobile_et.getText().toString();
 
                 if(task.isSuccessful()){
-                    String key = databaseReference.push().getKey();
-                    UserInfo userInfo = new UserInfo(name, couse,mobile);
-                    databaseReference.child(key).setValue(userInfo);
+                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(Task<InstanceIdResult> task) {
+                            if(task.isSuccessful()){
+                                String key = databaseReference.push().getKey();
+                                UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken());
 
-                    progressBar.setVisibility(View.VISIBLE);
-                    Intent intent = new Intent(LoginStudents.this, sact.class);
-                    startActivity(intent);
-                    finish();
-                    progressBar.setVisibility(View.GONE);
+                                databaseReference.child("+91"+mobile).setValue(userInfo);
+
+                                Intent intent = new Intent(LoginStudents.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
+
+
                 }else{
                     //Toast.makeText(LoginStudents.this, "Not Success"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -127,14 +164,18 @@ public class LoginStudents extends AppCompatActivity {
         );
     }
 
+    private AlertDialog alertDialog;
+    private ProgressDialog progressDialog;
     private String verifyID;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
-            Toast.makeText(LoginStudents.this, "Code Sent to Mobile", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginStudents.this, "Code Sent to Mobile", Toast.LENGTH_LONG).show();
             verifyID = s;
+            progressDialog.setTitle("Please Wait.....Don't Close!!!");
+            progressDialog.show();
         }
 
         @Override
@@ -148,7 +189,7 @@ public class LoginStudents extends AppCompatActivity {
         @Override
         public void onVerificationFailed(FirebaseException e) {
            // Toast.makeText(LoginStudents.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            progressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
         }
     };
 
@@ -162,7 +203,7 @@ public class LoginStudents extends AppCompatActivity {
 
         } else {
             // User logged in
-            Intent intent = new Intent(LoginStudents.this, sact.class);
+            Intent intent = new Intent(LoginStudents.this, MainActivity.class);
             finish();
             startActivity(intent);
         }

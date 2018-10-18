@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="4th Year" />
+            android:text="ALL" />
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -78,7 +78,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner2">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/notice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,12 +118,14 @@
         android:id="@+id/upimg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Image"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.213"
+        app:layout_constraintStart_toEndOf="@+id/checkBoxisImage"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 
     <ImageView
@@ -138,5 +140,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upimg" />
+
+    <CheckBox
+        android:id="@+id/checkBoxisImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="8dp"
+        android:text="Image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

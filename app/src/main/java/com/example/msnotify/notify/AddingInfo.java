@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -29,6 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,9 +51,10 @@ import androidx.core.content.FileProvider;
 
 public class AddingInfo extends AppCompatActivity {
 
+    private CheckBox checkBox;
     private FloatingActionButton floatingActionButton;
     private Spinner spinner;
-    private EditText editText;
+    private TextInputEditText editText;
     private DatabaseReference databaseReference;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
@@ -71,6 +75,7 @@ public class AddingInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding_info);
         root = findViewById(R.id.rootadd);
+        checkBox = findViewById(R.id.checkBoxisImage);
         upload = findViewById(R.id.upimg);
         spinner = findViewById(R.id.spinner2);
         editText = findViewById(R.id.notice);
@@ -86,16 +91,26 @@ public class AddingInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                progressDialog.setTitle("Sending Notice to Students");
-                progressDialog.show();
-                done();
+                    progressDialog.setTitle("Sending Notice to Students");
+                    progressDialog.show();
+                    doneUploaded();
+
             }
         });
 
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    upload.setEnabled(true);
+                }else {
+                    upload.setEnabled(false);
+                }
+            }
+        });
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 selectImage();
             }
         });
@@ -244,7 +259,7 @@ public class AddingInfo extends AppCompatActivity {
     }
 
 
-    private void done() {
+    private void doneUploaded() {
         String not = editText.getText().toString();
         String bra = spinner.getSelectedItem().toString();
         int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -252,8 +267,25 @@ public class AddingInfo extends AppCompatActivity {
         if (bra.isEmpty() || not.isEmpty() || selectedId == -1) {
             showError();
         } else {
-            uploadFile();
+            if (checkBox.isChecked()){
+                uploadFile();
+            }else {
+                radioButton = (RadioButton) findViewById(selectedId);
+                String yer = radioButton.getText().toString();
+                String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
+
+                String key = databaseReference.push().getKey();
+                Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                databaseReference.child(key).setValue(info);
+
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+                progressDialog.dismiss();
+            }
+
         }
+
 
     }
 

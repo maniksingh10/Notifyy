@@ -45,7 +45,6 @@ public class sact extends AppCompatActivity {
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notice");
     private List<Info> infoList = new ArrayList<>();
 
-    private TextView mEmptyStateTextView;
     View loadingIndicator;
 
     @Override
@@ -55,40 +54,17 @@ public class sact extends AppCompatActivity {
 
         loadingIndicator = findViewById(R.id.loading_spinner);
         loadingIndicator.setVisibility(View.VISIBLE);
-        mEmptyStateTextView = findViewById(R.id.empty_view);
+
 
         recyclerView = findViewById(R.id.lists);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        loadingIndicator.setVisibility(View.GONE);
+        add();
 
-        if (isNetworkAvailable()) {
-            add();
-        } else {
-            loadingIndicator.setVisibility(View.GONE);
-            mEmptyStateTextView.setVisibility(View.VISIBLE);
-        }
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                if (direction == ItemTouchHelper.RIGHT) {
-                    Info pos = infoList.get(viewHolder.getAdapterPosition());
-                    loadPhoto(pos.getUrl());
-                    adap.notifyDataSetChanged();
-                }
-            }
-        }).attachToRecyclerView(recyclerView);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
     private void add() {
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -114,11 +90,6 @@ public class sact extends AppCompatActivity {
     }
 
 
-//    int noticepostiton;
-//    @Override
-//    public void onNoticeClicked(int noticePos) {
-//
-//    }
 
     private void loadPhoto(String url) {
         AlertDialog windowAnimations;
@@ -129,7 +100,6 @@ public class sact extends AppCompatActivity {
                 (ViewGroup) findViewById(R.id.layout_root));
         PhotoView image = layout.findViewById(R.id.photo_view);
         Glide.with(this).load(url).into(image);
-
         imageDialog.setView(layout);
         windowAnimations = imageDialog.create();
         windowAnimations.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
@@ -137,6 +107,35 @@ public class sact extends AppCompatActivity {
     }
 
 
+
+    ItemTouchHelper.SimpleCallback simpleCallback= new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.RIGHT) {
+                Info pos = infoList.get(viewHolder.getAdapterPosition());
+
+                loadPhoto(pos.getUrl());
+                adap.notifyDataSetChanged();
+            }
+        }
+        @Override
+        public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            Info pos = infoList.get(viewHolder.getAdapterPosition());
+            if (pos.getUrl().isEmpty()) return 0;
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+    };
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
 
 

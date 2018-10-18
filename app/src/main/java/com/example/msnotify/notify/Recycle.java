@@ -27,7 +27,6 @@ import java.util.List;
 
 public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
 
-    private imgClickListenerInter imgClickListener;
 
     private List<Info> list = new ArrayList<>();
     private Context context;
@@ -39,7 +38,6 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
     public Recycle(Context context, List<Info> infoList) {
         this.context = context;
         this.list = infoList;
-//        this.imgClickListener = ClickListener;
 
     }
 
@@ -51,6 +49,7 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
         return new ViewHolder(v);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Info info = list.get(i);
@@ -59,7 +58,13 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
         viewHolder.tvdate.setText(info.getDate());
         viewHolder.tvyear.setText(info.getYear());
         viewHolder.tvdes.setText(info.getNotice());
-        //Glide.with(context).load(info.getUrl()).into(viewHolder.itemIimage);
+        if(info.getUrl().isEmpty()){
+            viewHolder.itemIimage.setVisibility(View.GONE);
+        }else{
+            viewHolder.itemIimage.setVisibility(View.VISIBLE);
+        }
+
+
 //        final int a= viewHolder.getAdapterPosition();
 //        final boolean isExpanded = a==mExpandedPosition;
 //        viewHolder.itemIimage.setVisibility(isExpanded?View.VISIBLE:View.GONE);
@@ -82,7 +87,7 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvdate;
         TextView tvbra;
         TextView tvname;
@@ -98,21 +103,14 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
             tvdes = v.findViewById(R.id.tvmain);
             tvyear = v.findViewById(R.id.tvyear);
             itemIimage = v.findViewById(R.id.itemimg);
-            v.setOnClickListener(this);
+
 
         }
 
-        @Override
-        public void onClick(View v) {
-            int cllcpos = getAdapterPosition();
-            imgClickListener.onNoticeClicked(cllcpos);
-        }
 
     }
 
-    public interface imgClickListenerInter {
-        void onNoticeClicked(int noticePos);
-    }
+
 
 
 }

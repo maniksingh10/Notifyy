@@ -25,7 +25,7 @@
             android:maxLength="9"
             android:text="Date"
             android:fontFamily="@font/gmedium"
-            android:textSize="17sp"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,47 +53,42 @@
 
         <TextView
             android:id="@+id/tvmain"
-            android:layout_width="0dp"
+            android:layout_width="336dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
             android:fontFamily="@font/googlesansbold"
-            app:layout_constraintBottom_toTopOf="@+id/tvname"
+            android:text="TextView"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/itemimg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvyear" />
 
         <TextView
             android:id="@+id/tvname"
-            android:maxLength="10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
             android:layout_marginEnd="6dp"
-            android:layout_marginTop="40dp"
-            android:text="Manik "
+            android:layout_marginBottom="6dp"
             android:fontFamily="@font/gregular"
+            android:maxLength="10"
+            android:text="Manik "
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvyear"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
             android:id="@+id/itemimg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/tvname"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvyear"
-            app:srcCompat="@android:drawable/star_big_on" />
+            android:src="@drawable/ic_arrow_forward_black_24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

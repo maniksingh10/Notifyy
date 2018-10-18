@@ -20,6 +20,7 @@
     <string name="edittext_hint"><font size="40">Enter Notice</font></string>
     <string name="branch">Branch</string>
     <array name="bran">
+        <item>Everyone</item>
         <item>Computer</item>
         <item>Electric</item>
         <item>Civil</item>
