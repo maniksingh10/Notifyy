@@ -51,7 +51,7 @@ import androidx.core.content.FileProvider;
 
 public class AddingInfo extends AppCompatActivity {
 
-    private CheckBox checkBox;
+    private CheckBox checkBox, cb_isEveryone;
     private FloatingActionButton floatingActionButton;
     private Spinner spinner;
     private TextInputEditText editText;
@@ -76,6 +76,7 @@ public class AddingInfo extends AppCompatActivity {
         setContentView(R.layout.activity_adding_info);
         root = findViewById(R.id.rootadd);
         checkBox = findViewById(R.id.checkBoxisImage);
+        cb_isEveryone = findViewById(R.id.checkBoxisEveryone);
         upload = findViewById(R.id.upimg);
         spinner = findViewById(R.id.spinner2);
         editText = findViewById(R.id.notice);
@@ -91,19 +92,36 @@ public class AddingInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                    progressDialog.setTitle("Sending Notice to Students");
-                    progressDialog.show();
-                    doneUploaded();
+                progressDialog.setTitle("Sending Notice to Students");
+                progressDialog.show();
+                doneUploaded();
 
+            }
+        });
+
+        cb_isEveryone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    spinner.setEnabled(false);
+                    for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                        ((RadioButton) radioGroup.getChildAt(i)).setEnabled(false);
+                    }
+                } else {
+                    spinner.setEnabled(true);
+                    for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                        ((RadioButton) radioGroup.getChildAt(i)).setEnabled(true);
+                    }
+                }
             }
         });
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     upload.setEnabled(true);
-                }else {
+                } else {
                     upload.setEnabled(false);
                 }
             }
@@ -232,14 +250,26 @@ public class AddingInfo extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         url = downloadUri.toString();
-                        int selectedId = radioGroup.getCheckedRadioButtonId();
-                        radioButton = (RadioButton) findViewById(selectedId);
-                        String yer = radioButton.getText().toString();
                         String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
 
-                        String key = databaseReference.push().getKey();
-                        Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
-                        databaseReference.child(key).setValue(info);
+                        if (cb_isEveryone.isChecked()) {
+                            String key = databaseReference.push().getKey();
+                            Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                            databaseReference.child(key).setValue(info);
+                        } else {
+                            int selectedId = radioGroup.getCheckedRadioButtonId();
+                            radioButton = (RadioButton) findViewById(selectedId);
+                            String yer = radioButton.getText().toString();
+
+                            String key = databaseReference.push().getKey();
+                            if (cb_isEveryone.isChecked()) {
+                                Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                                databaseReference.child(key).setValue(info);
+                            } else {
+                                Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                                databaseReference.child(key).setValue(info);
+                            }
+                        }
 
                         Intent returnIntent = new Intent();
                         setResult(Activity.RESULT_OK, returnIntent);
@@ -264,26 +294,50 @@ public class AddingInfo extends AppCompatActivity {
         String bra = spinner.getSelectedItem().toString();
         int selectedId = radioGroup.getCheckedRadioButtonId();
 
-        if (bra.isEmpty() || not.isEmpty() || selectedId == -1) {
-            showError();
-        } else {
-            if (checkBox.isChecked()){
-                uploadFile();
-            }else {
-                radioButton = (RadioButton) findViewById(selectedId);
-                String yer = radioButton.getText().toString();
-                String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
-
-                String key = databaseReference.push().getKey();
-                Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
-                databaseReference.child(key).setValue(info);
-
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_OK, returnIntent);
-                finish();
-                progressDialog.dismiss();
+        if (cb_isEveryone.isChecked()) {
+            if (not.isEmpty()) {
+                showError();
+            } else {
+                if (checkBox.isChecked()) {
+                    uploadFile();
+                } else {
+                    String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
+                    String key = databaseReference.push().getKey();
+                    if (cb_isEveryone.isChecked()) {
+                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        databaseReference.child(key).setValue(info);
+                    }
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+                    progressDialog.dismiss();
+                }
             }
+        } else {
+            if (bra.isEmpty() || not.isEmpty() || selectedId == -1) {
+                showError();
+            } else {
+                if (checkBox.isChecked()) {
+                    uploadFile();
+                } else {
+                    radioButton = (RadioButton) findViewById(selectedId);
+                    String yer = radioButton.getText().toString();
+                    String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
 
+                    String key = databaseReference.push().getKey();
+                    if (cb_isEveryone.isChecked()) {
+                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        databaseReference.child(key).setValue(info);
+                    } else {
+                        Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        databaseReference.child(key).setValue(info);
+                    }
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+                    progressDialog.dismiss();
+                }
+            }
         }
 
 

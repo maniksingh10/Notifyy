@@ -26,13 +26,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -44,9 +49,9 @@ public class sact extends AppCompatActivity {
     private Recycle adap;
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notice");
     private List<Info> infoList = new ArrayList<>();
-
-    View loadingIndicator;
-
+    private Spinner spn_branch;
+    private View loadingIndicator;
+    private CheckBox sEveryone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,19 +59,14 @@ public class sact extends AppCompatActivity {
 
         loadingIndicator = findViewById(R.id.loading_spinner);
         loadingIndicator.setVisibility(View.VISIBLE);
+        spn_branch = findViewById(R.id.spn_branch);
 
-
+        sEveryone = findViewById(R.id.stcheckBoxisEveryone);
         recyclerView = findViewById(R.id.lists);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
         loadingIndicator.setVisibility(View.GONE);
-        add();
-
-    }
-
-
-    private void add() {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,18 +78,56 @@ public class sact extends AppCompatActivity {
                 }
                 adap = new Recycle(getApplicationContext(), infoList);
                 recyclerView.setAdapter(adap);
-
                 loadingIndicator.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
+
+        sEveryone.setChecked(true);
+        if(sEveryone.isChecked()){
+            searchNoti(true);
+        }
+        sEveryone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    searchNoti(true);
+                }else{
+                   searchNoti(false);
+                }
+            }
+        });
+
+
+
+
+
     }
 
-
+    private void searchNoti(boolean is){
+        if(is){
+            spn_branch.setEnabled(false);
+            Query query = databaseReference.orderByChild("branch").equalTo("Everyone");
+            query.addValueEventListener(customEventListener);
+        }else{
+            spn_branch.setEnabled(true);
+            Query query = databaseReference.orderByChild("branch").equalTo(spn_branch.getSelectedItem().toString());
+            query.addValueEventListener(customEventListener);
+            spn_branch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Query query = databaseReference.orderByChild("branch").equalTo(spn_branch.getItemAtPosition(position).toString());
+                    query.addValueEventListener(customEventListener);
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+        }
+    }
 
     private void loadPhoto(String url) {
         AlertDialog windowAnimations;
@@ -106,13 +144,33 @@ public class sact extends AppCompatActivity {
         windowAnimations.show();
     }
 
+    ValueEventListener customEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            infoList.clear();
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                Info info = snapshot.getValue(Info.class);
+                infoList.add(info);
+            }
+            adap = new Recycle(getApplicationContext(), infoList);
+            recyclerView.setAdapter(adap);
+
+            loadingIndicator.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
 
-    ItemTouchHelper.SimpleCallback simpleCallback= new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
         }
+
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             if (direction == ItemTouchHelper.RIGHT) {
@@ -122,6 +180,7 @@ public class sact extends AppCompatActivity {
                 adap.notifyDataSetChanged();
             }
         }
+
         @Override
         public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
             Info pos = infoList.get(viewHolder.getAdapterPosition());
@@ -131,11 +190,28 @@ public class sact extends AppCompatActivity {
     };
 
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+  /*
+    private void add() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Snackbar.make(recyclerView, "Notice Update", Snackbar.LENGTH_SHORT).show();
+                infoList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Info info = snapshot.getValue(Info.class);
+                    infoList.add(info);
+                }
+                adap = new Recycle(getApplicationContext(), infoList);
+                recyclerView.setAdapter(adap);
+                loadingIndicator.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
+*/
 }
 
 

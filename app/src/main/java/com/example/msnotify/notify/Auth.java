@@ -6,6 +6,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -93,7 +94,7 @@ public class Auth extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Intent intent = new Intent(Auth.this, tActivity.class);
+                    Intent intent = new Intent(Auth.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 } else {
@@ -110,15 +111,17 @@ public class Auth extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
         if (currentUser == null) {
             // No user is signed in
 
         } else {
             // User logged in
-            Intent intent = new Intent(Auth.this, tActivity.class);
+            Intent intent = new Intent(Auth.this, MainActivity.class);
             finish();
             startActivity(intent);
         }
+
 
     }
 

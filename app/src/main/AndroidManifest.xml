@@ -24,9 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"/>
-
-
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".sact"
             android:label="Notice Board">
@@ -43,8 +41,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.msnotify.notify.MainActivity" />
         </activity>
-        <activity android:name=".AddingInfo" />
+        <activity
+            android:name=".AddingInfo"
+            android:label="Notice">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.msnotify.notify.tActivity" />
+        </activity>
         <activity android:name=".Auth" />
+
+
+        <activity android:name=".LoginStudents"></activity>
+        <activity
+            android:name=".FirstScreen"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -55,13 +71,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_list" />
         </provider>
-
-        <activity android:name=".LoginStudents" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter></activity>
     </application>
 
 </manifest>

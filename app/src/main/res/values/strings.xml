@@ -20,11 +20,17 @@
     <string name="edittext_hint"><font size="40">Enter Notice</font></string>
     <string name="branch">Branch</string>
     <array name="bran">
-        <item>Everyone</item>
         <item>Computer</item>
         <item>Electric</item>
         <item>Civil</item>
         <item>Automobile</item>
         <item>Mechanical</item>
+    </array>
+
+    <array name="year_arr">
+        <item>All Years</item>
+        <item>2nd Year</item>
+        <item>3rd Year</item>
+        <item>4th Year</item>
     </array>
 </resources>

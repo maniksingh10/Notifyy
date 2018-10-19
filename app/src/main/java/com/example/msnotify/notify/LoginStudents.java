@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -76,7 +79,6 @@ public class LoginStudents extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 if(s.length() == 10){
                     send_bt.setEnabled(true);
                 }else{
@@ -99,10 +101,8 @@ public class LoginStudents extends AppCompatActivity {
 
         if(name.isEmpty() ||couse.isEmpty()||mobile.isEmpty() ){
             showError();
-
         } else{
             sendverifycode("+91"+mobile);
-
         }
     }
 
@@ -120,7 +120,8 @@ public class LoginStudents extends AppCompatActivity {
         signinwiithcreditndial(phoneAuthCredential);
     }
 
-
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
     private void signinwiithcreditndial(PhoneAuthCredential phoneAuthCredential) {
         firebaseAuth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -129,29 +130,36 @@ public class LoginStudents extends AppCompatActivity {
                 final String name= nickname_et.getText().toString();
                 final String couse = course_et.getSelectedItem().toString();
                 final String mobile = mobile_et.getText().toString();
-
-                if(task.isSuccessful()){
-                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                        @Override
-                        public void onComplete(Task<InstanceIdResult> task) {
-                            if(task.isSuccessful()){
-                                String key = databaseReference.push().getKey();
-                                UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken());
-
-                                databaseReference.child("+91"+mobile).setValue(userInfo);
-
-                                Intent intent = new Intent(LoginStudents.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }
-                    });
-
-
+                final String yer;
+                radioGroup = findViewById(R.id.logradioGroup);
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                if(selectedId == -1){
+                   showError();
                 }else{
-                    //Toast.makeText(LoginStudents.this, "Not Success"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    radioButton = (RadioButton) findViewById(selectedId);
+                    yer = radioButton.getText().toString();
+                    if(task.isSuccessful()){
+                        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(Task<InstanceIdResult> task) {
+                                if(task.isSuccessful()){
+                                    String key = databaseReference.push().getKey();
+                                    UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken(),Build.MODEL,yer);
 
+                                    databaseReference.child("+91"+mobile).setValue(userInfo);
+
+                                    Intent intent = new Intent(LoginStudents.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+                        });
+                    }else{
+                        //Toast.makeText(LoginStudents.this, "Not Success"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+
             }
         });
     }
