@@ -32,6 +32,8 @@ public class tActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
+                Intent intent = new Intent(tActivity.this, FirstScreen.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();
             }
         });
@@ -45,8 +47,6 @@ public class tActivity extends AppCompatActivity  {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
 
     }
 

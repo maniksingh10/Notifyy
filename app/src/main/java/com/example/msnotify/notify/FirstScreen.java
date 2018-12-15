@@ -9,10 +9,12 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class FirstScreen extends AppCompatActivity {
 
     private Button fstu,firteac;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,8 @@ public class FirstScreen extends AppCompatActivity {
         setContentView(R.layout.activity_first_screen);
         fstu =findViewById(R.id.studentbtnFirst);
         firteac = findViewById(R.id.teacherbtnFirst);
+
+
 
         fstu.setOnClickListener(new View.OnClickListener() {
             @Override

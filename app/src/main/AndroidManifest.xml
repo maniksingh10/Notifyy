@@ -49,12 +49,8 @@
                 android:value="com.example.msnotify.notify.tActivity" />
         </activity>
         <activity android:name=".Auth" />
-
-
-        <activity android:name=".LoginStudents"></activity>
-        <activity
-            android:name=".FirstScreen"
-            >
+        <activity android:name=".LoginStudents" />
+        <activity android:name=".FirstScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -71,6 +67,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_list" />
         </provider>
+
+        <activity android:name=".Syla_act" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.msnotify.notify.MainActivity" />
+        </activity>
+        <activity android:name=".AboutMe">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.msnotify.notify.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

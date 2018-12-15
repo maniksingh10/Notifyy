@@ -77,13 +77,6 @@
             android:fontFamily="@font/googlesansbold"
             android:text="3rd Year" />
 
-        <RadioButton
-            android:id="@+id/radioButton4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/googlesansbold"
-            android:text="4th Year" />
     </RadioGroup>
 
     <Spinner

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,14 +15,18 @@ import android.os.Bundle;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,8 +43,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnstudent, btnteacher, btntimetable;
-    private DatabaseReference appinfo;
+
+    private Button btntimetable,btnteacher,btnstudent,btnsyll;
+    private DatabaseReference appinfo,teachverify;
     private ConstraintLayout mainroot;
     private ProgressBar progressBar;
     private int stime;
@@ -52,25 +58,59 @@ public class MainActivity extends AppCompatActivity {
     private List<String> uid = new ArrayList<String>();
 
     private int time;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         appinfo = FirebaseDatabase.getInstance().getReference("AppInfoNotify");
-        uid.add("Wsqfd6DSuCOo5q3EbaSXnD2Og0D3");
-        uid.add("Wsqfd6DSuCOo5q3EbaSXnD2Og0D3");
+        teachverify = FirebaseDatabase.getInstance().getReference("Admin");
+
         progressBar = findViewById(R.id.wait);
         btntimetable = findViewById(R.id.timetablebtn);
         btnstudent = findViewById(R.id.studentbtn);
         btnteacher = findViewById(R.id.teacherbtn);
+        btnsyll = findViewById(R.id.syallabusbtn);
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (uid.contains(firebaseUser.getUid())) {
-            btnteacher.setVisibility(View.VISIBLE);
-        } else {
-            btnteacher.setVisibility(View.GONE);
-        }
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
+
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+
+                        return true;
+                    }
+                });
+        teachverify.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot :dataSnapshot.getChildren()){
+                    Teach teach1 = snapshot.getValue(Teach.class);
+                    uid.add(teach1.getMuid());
+                }
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (uid.contains(firebaseUser.getUid())) {
+                    btnteacher.setVisibility(View.VISIBLE);
+                } else {
+                    btnteacher.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         mainroot = findViewById(R.id.mainroot);
         alertyv = findViewById(R.id.tvappinfo);
 
@@ -83,16 +123,15 @@ public class MainActivity extends AppCompatActivity {
             alertyv.setVisibility(View.VISIBLE);
             alertyv.setText("Hey, It looks Like you are Offline \n :(");
         }
-
-
         appinfo.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     MyInfo myInfo = snapshot.getValue(MyInfo.class);
-                    stime = myInfo.getStart();
+                    stime = 0001;
                     ttime = myInfo.getTill();
-                    state = myInfo.getState();
+                    state = "on";
+                    quote = myInfo.getQuote();
                     quote = myInfo.getQuote();
                     versionName = myInfo.getVer();
                 }
@@ -103,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
     }
 
     private boolean isNetworkAvailable() {
@@ -117,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
         String currentDateAndTime = new SimpleDateFormat("HHmm", Locale.getDefault()).format(new Date());
         time = Integer.parseInt(currentDateAndTime);
         String vename = BuildConfig.VERSION_NAME;
-        Log.d("cjeck", String.valueOf(time) + String.valueOf(stime) + String.valueOf(ttime) + state + versionName);
 
         if (versionName.equals(vename)) {
             if (time >= stime && time < ttime && state.equals("on")) {
@@ -140,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                btnsyll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, Syla_act.class);
+                        startActivity(intent);
+                    }
+                });
                 btntimetable.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -170,5 +214,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.about_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                // do something
+                Intent intent = new Intent(MainActivity.this, AboutMe.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }
