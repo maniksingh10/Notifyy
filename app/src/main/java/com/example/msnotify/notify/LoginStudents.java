@@ -102,7 +102,7 @@ public class LoginStudents extends AppCompatActivity {
         if(name.isEmpty() ||couse.isEmpty()||mobile.isEmpty() ){
             showError();
         } else{
-            sendverifycode("+91"+mobile);
+          sendverifycode("+91"+mobile);
         }
     }
 
@@ -144,9 +144,9 @@ public class LoginStudents extends AppCompatActivity {
                             public void onComplete(Task<InstanceIdResult> task) {
                                 if(task.isSuccessful()){
                                     String key = databaseReference.push().getKey();
-                                    UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken(),Build.MODEL,yer);
+                                    UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken(),Build.MODEL,yer,System.currentTimeMillis());
 
-                                    databaseReference.child("+91"+mobile).setValue(userInfo);
+                                    databaseReference.child(couse).child("+91"+mobile).setValue(userInfo);
 
                                     Intent intent = new Intent(LoginStudents.this, MainActivity.class);
                                     startActivity(intent);
@@ -155,20 +155,18 @@ public class LoginStudents extends AppCompatActivity {
                             }
                         });
                     }else{
-                        //Toast.makeText(LoginStudents.this, "Not Success"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginStudents.this, "Not Success"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
             }
         });
     }
 
     private void sendverifycode(String phone) {
+        progressDialog.setTitle("Please Wait.....Don't Close!!!");
+        progressDialog.show();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phone, 60, TimeUnit.SECONDS, TaskExecutors.MAIN_THREAD, mCallBack
-
-
         );
     }
 
@@ -177,13 +175,12 @@ public class LoginStudents extends AppCompatActivity {
     private String verifyID;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
+
         @Override
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
             Toast.makeText(LoginStudents.this, "Code Sent to Mobile", Toast.LENGTH_LONG).show();
             verifyID = s;
-            progressDialog.setTitle("Please Wait.....Don't Close!!!");
-            progressDialog.show();
         }
 
         @Override
@@ -196,7 +193,7 @@ public class LoginStudents extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
-           // Toast.makeText(LoginStudents.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginStudents.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
         }
     };

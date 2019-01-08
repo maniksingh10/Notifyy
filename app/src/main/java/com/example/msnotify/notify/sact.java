@@ -63,7 +63,7 @@ public class sact extends AppCompatActivity {
 
         sEveryone = findViewById(R.id.stcheckBoxisEveryone);
         recyclerView = findViewById(R.id.lists);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
         loadingIndicator.setVisibility(View.GONE);
@@ -78,6 +78,7 @@ public class sact extends AppCompatActivity {
                 }
                 adap = new Recycle(getApplicationContext(), infoList);
                 recyclerView.setAdapter(adap);
+                recyclerView.smoothScrollToPosition(infoList.size());
                 loadingIndicator.setVisibility(View.GONE);
             }
 
@@ -100,11 +101,6 @@ public class sact extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
-
     }
 
     private void searchNoti(boolean is){
@@ -154,7 +150,7 @@ public class sact extends AppCompatActivity {
             }
             adap = new Recycle(getApplicationContext(), infoList);
             recyclerView.setAdapter(adap);
-
+            recyclerView.smoothScrollToPosition(infoList.size());
             loadingIndicator.setVisibility(View.GONE);
         }
 

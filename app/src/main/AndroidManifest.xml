@@ -68,12 +68,21 @@
                 android:resource="@xml/file_list" />
         </provider>
 
-        <activity android:name=".Syla_act" >
+        <activity android:name=".Syla_act"
+            android:label="Syllabus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.msnotify.notify.MainActivity" />
         </activity>
-        <activity android:name=".AboutMe">
+        <activity android:name=".AboutMe"
+            android:label="About">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.msnotify.notify.MainActivity" />
+        </activity>
+        <activity android:name=".TimeTable" />
+        <activity android:name=".Attendance"
+            android:label="Attendance">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.msnotify.notify.MainActivity" />

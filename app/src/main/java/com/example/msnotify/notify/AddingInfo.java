@@ -254,7 +254,7 @@ public class AddingInfo extends AppCompatActivity {
 
                         if (cb_isEveryone.isChecked()) {
                             String key = databaseReference.push().getKey();
-                            Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                            Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url,System.currentTimeMillis()/1000);
                             databaseReference.child(key).setValue(info);
                         } else {
                             int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -263,10 +263,10 @@ public class AddingInfo extends AppCompatActivity {
 
                             String key = databaseReference.push().getKey();
                             if (cb_isEveryone.isChecked()) {
-                                Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                                Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url,System.currentTimeMillis()/1000);
                                 databaseReference.child(key).setValue(info);
                             } else {
-                                Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url);
+                                Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, url,System.currentTimeMillis()/1000);
                                 databaseReference.child(key).setValue(info);
                             }
                         }
@@ -304,7 +304,7 @@ public class AddingInfo extends AppCompatActivity {
                     String sdate = new SimpleDateFormat("dd-MMM-yy hh:mm aa", Locale.getDefault()).format(new Date());
                     String key = databaseReference.push().getKey();
                     if (cb_isEveryone.isChecked()) {
-                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "",System.currentTimeMillis()/1000);
                         databaseReference.child(key).setValue(info);
                     }
                     Intent returnIntent = new Intent();
@@ -326,10 +326,10 @@ public class AddingInfo extends AppCompatActivity {
 
                     String key = databaseReference.push().getKey();
                     if (cb_isEveryone.isChecked()) {
-                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        Info info = new Info("", editText.getText().toString(), "Everyone", FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "",System.currentTimeMillis()/1000);
                         databaseReference.child(key).setValue(info);
                     } else {
-                        Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "");
+                        Info info = new Info(yer, editText.getText().toString(), spinner.getSelectedItem().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), sdate, "",System.currentTimeMillis()/1000);
                         databaseReference.child(key).setValue(info);
                     }
                     Intent returnIntent = new Intent();

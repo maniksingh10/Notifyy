@@ -8,19 +8,21 @@ public class Info {
     private String tName;
     private String date;
     private String url;
+    private long timeinmsnotice;
 
     public Info(){
 
     }
 
 
-    public Info(String year, String notice, String branch, String tName,String date,String url) {
+    public Info(String year, String notice, String branch, String tName,String date,String url,long timeinmsnotice) {
         this.year = year;
         this.notice = notice;
         this.branch = branch;
         this.tName = tName;
         this.date =date;
         this.url=url;
+        this.timeinmsnotice = timeinmsnotice;
     }
 
     public String getDate() {
@@ -55,5 +57,9 @@ public class Info {
 
     public String gettName() {
         return tName;
+    }
+
+    public long getTimeinmsnotice() {
+        return timeinmsnotice;
     }
 }

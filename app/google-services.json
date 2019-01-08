@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "751880272732-srng2r806rs23ug1ddjt1o9kah6fgcus.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.msnotify.notify",
+            "certificate_hash": "860148f5de803bfbe70f9cbdbe3c6f0031690271"
+          }
+        },
+        {
+          "client_id": "751880272732-qkdtcbu1adets7gnpu94dl6bn9flfi84.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.msnotify.notify",
+            "certificate_hash": "b25897657481d49dfb096347930ffe1f65f30b84"
+          }
+        },
+        {
           "client_id": "751880272732-e0sre80adbn9rq0fiav53ncognetu7dv.apps.googleusercontent.com",
           "client_type": 3
         }

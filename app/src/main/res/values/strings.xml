@@ -16,9 +16,12 @@
         completions."
     </string>
 
+    <string name="open">Open</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="edittext_hint"><font size="40">Enter Notice</font></string>
     <string name="branch">Branch</string>
+    <string name="close">Close</string>
     <array name="bran">
         <item>Computer</item>
         <item>Electric</item>

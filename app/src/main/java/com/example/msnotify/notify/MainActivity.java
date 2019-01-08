@@ -4,13 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -44,7 +49,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
 
-    private Button btntimetable,btnteacher,btnstudent,btnsyll;
+    private Button btntimetable,btnteacher,btnstudent,btnsyll,btnatten;
     private DatabaseReference appinfo,teachverify;
     private ConstraintLayout mainroot;
     private ProgressBar progressBar;
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int time;
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,20 +78,31 @@ public class MainActivity extends AppCompatActivity {
         btnstudent = findViewById(R.id.studentbtn);
         btnteacher = findViewById(R.id.teacherbtn);
         btnsyll = findViewById(R.id.syallabusbtn);
+        btnatten = findViewById(R.id.attendancebtn);
 
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.open,R.string.close);
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mDrawerLayout.requestLayout();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+                        switch (menuItem.getItemId()){
+                            case R.id.clg_website:
+                                openSite("https://www.google.com/");
+                                break;
+                            case R.id.brd_website:
+                                openSite("https://www.google.com/");
+                                break;
+                        }
 
+                        mDrawerLayout.closeDrawers();
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
 
@@ -102,8 +119,10 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (uid.contains(firebaseUser.getUid())) {
                     btnteacher.setVisibility(View.VISIBLE);
+                    btnatten.setVisibility(View.GONE);
                 } else {
                     btnteacher.setVisibility(View.GONE);
+                    btnatten.setVisibility(View.VISIBLE);
                 }
             }
             @Override
@@ -177,6 +196,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                btnatten.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, Attendance.class);
+                        startActivity(intent);
+                    }
+                });
                 btnsyll.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -216,23 +242,48 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void openSite(String u) {
+        Uri url = Uri.parse(u);
+
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+        intentBuilder.setToolbarColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimaryDark));
+        intentBuilder.setStartAnimations(MainActivity.this, R.anim.slide_in_right, R.anim.slide_out_left);
+        intentBuilder.setExitAnimations(MainActivity.this, android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right);
+        CustomTabsIntent customTabsIntent = intentBuilder.build();
+
+        customTabsIntent.launchUrl(MainActivity.this, url);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.about_menu, menu);
+
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return super.onContextItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case R.id.about:
                 // do something
                 Intent intent = new Intent(MainActivity.this, AboutMe.class);
                 startActivity(intent);
-                return true;
+                 return true;
+
             default:
                 return super.onContextItemSelected(item);
         }
-    }
 }
+
+
+    }
+

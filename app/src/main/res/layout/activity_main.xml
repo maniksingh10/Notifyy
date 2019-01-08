@@ -13,15 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu ="@menu/drawer_view"/>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -54,14 +45,30 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="#00c853"
+                android:background="#03a9f4"
                 android:fontFamily="@font/googlesansbold"
                 android:text="I'm a Teacher"
                 android:textColor="#fff"
-                app:layout_constraintBottom_toTopOf="@+id/syallabusbtn"
+                app:layout_constraintBottom_toTopOf="@+id/attendancebtn"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <Button
+                android:id="@+id/attendancebtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#9c27b0"
+                android:fontFamily="@font/googlesansbold"
+                android:text="Attendance"
+                android:textColor="#fff"
+                app:layout_constraintBottom_toTopOf="@+id/syallabusbtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
             <Button
                 android:id="@+id/syallabusbtn"
                 android:layout_width="0dp"
@@ -69,7 +76,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="#03a9f4"
+                android:background="#00c853"
                 android:fontFamily="@font/googlesansbold"
                 android:text="Syllabus"
                 android:textColor="#fff"
@@ -128,5 +135,14 @@
 
 
     </RelativeLayout>
+    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu ="@menu/drawer_view"/>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
