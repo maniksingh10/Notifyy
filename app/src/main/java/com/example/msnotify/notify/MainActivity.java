@@ -1,6 +1,7 @@
 package com.example.msnotify.notify;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -80,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
         btnsyll = findViewById(R.id.syallabusbtn);
         btnatten = findViewById(R.id.attendancebtn);
 
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.open,R.string.close);
         mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mDrawerLayout.requestLayout();
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     MyInfo myInfo = snapshot.getValue(MyInfo.class);
                     stime = 0001;
                     ttime = myInfo.getTill();
-                    state = "on";
+                    state = myInfo.getState();
                     quote = myInfo.getQuote();
                     quote = myInfo.getQuote();
                     versionName = myInfo.getVer();
@@ -213,18 +214,36 @@ public class MainActivity extends AppCompatActivity {
                 btntimetable.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AlertDialog windowAnimations;
-                        AlertDialog.Builder imageDialog = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Black_NoTitleBar);
-                        LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-                        View layout = inflater.inflate(R.layout.custom_fullimage_dialog,
-                                (ViewGroup) findViewById(R.id.layout_root));
-                        PhotoView image = layout.findViewById(R.id.photo_view);
-                        Glide.with(MainActivity.this).load("https://firebasestorage.googleapis.com/v0/b/notify-f6631.appspot.com/o/uploads%2F1539942491698.jpg?alt=media&token=e5724fcc-6833-4dad-a6de-3e87f0b23232").into(image);
-                        imageDialog.setView(layout);
-                        windowAnimations = imageDialog.create();
-                        windowAnimations.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
-                        windowAnimations.show();
+
+                        final CharSequence[] options = {"Computer, Electronics", "Automobile, Mechanical, Civil"};
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Branch");
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int item) {
+                                if (options[item].equals("Computer, Electronics")) {
+                                    dialog.dismiss();
+
+                                    AlertDialog windowAnimations;
+                                    AlertDialog.Builder imageDialog = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Black_NoTitleBar);
+                                    LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                                    View layout = inflater.inflate(R.layout.custom_fullimage_dialog,
+                                            (ViewGroup) findViewById(R.id.layout_root));
+                                    PhotoView image = layout.findViewById(R.id.photo_view);
+                                    Glide.with(MainActivity.this).load("https://firebasestorage.googleapis.com/v0/b/notify-f6631.appspot.com/o/uploads%2F1539942491698.jpg?alt=media&token=e5724fcc-6833-4dad-a6de-3e87f0b23232").into(image);
+                                    imageDialog.setView(layout);
+                                    windowAnimations = imageDialog.create();
+                                    windowAnimations.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+                                    windowAnimations.show();
+                                } else if (options[item].equals("Automobile, Mechanical, Civil")) {
+                                    dialog.dismiss();
+
+                                }
+                            }
+                        });
+                        builder.show();
                     }
                 });
             } else {
@@ -260,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.about_menu, menu);
-
         return true;
     }
 

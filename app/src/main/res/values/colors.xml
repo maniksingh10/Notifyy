@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff5252</color>
     <color name="grenn">#4caf50</color>
+    <color name="low_attend">#f44336</color>
+    <color name="full_attend">#00c853</color>
 </resources>

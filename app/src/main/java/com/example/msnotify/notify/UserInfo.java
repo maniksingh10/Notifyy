@@ -9,10 +9,12 @@ public class UserInfo {
     private String device;
     private String year;
     private long timeinms;
+    private int attendance;
+    private String date_attendace;
     public UserInfo(){
 
     }
-    public UserInfo(String name, String course, String mobile,String token,String device,String year,long timeinms) {
+    public UserInfo(String name, String course, String mobile,String token,String device,String year,long timeinms,int attendance,String date_attendace) {
         this.name = name;
         this.course = course;
         this.mobile = mobile;
@@ -20,6 +22,8 @@ public class UserInfo {
         this.device =device;
         this.year=year;
         this.timeinms = timeinms;
+        this.attendance = attendance;
+        this.date_attendace=date_attendace;
     }
 
     public String getName() {
@@ -49,4 +53,8 @@ public class UserInfo {
     public long getTimeinms() {
         return timeinms;
     }
+
+    public int getAttendance(){return attendance;}
+
+    public String getDate_attendace(){return date_attendace;}
 }

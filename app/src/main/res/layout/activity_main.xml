@@ -126,7 +126,6 @@
             android:textSize="35sp" />
 
         <ProgressBar
-
             android:id="@+id/wait"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

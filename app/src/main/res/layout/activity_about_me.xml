@@ -11,17 +11,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:padding="8dp"
-        android:text="This app is made so that students stay updated to all the notices.\n\nSo from now no need to see the notice board every morning and look for new notices.\n\nYou can now look at the time table from this app only.\n\n\n\nFor feedback or anything you don't like in the app. Contact me. I will appreciate it."
+        android:text="This app is made so that students stay updated to all the notices.\n\nSo from now no need to see the notice board every morning and look for new notices.\n\nYou can now look at the time table from this app only.\n\nNo need to worry about your attendance fill in the lectures you attended at the end of the day and check your percentage whenever you need.\n\n\n\nFor feedback or anything you don't like in the app. Contact us on WhatsApp."
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.188" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/button2"

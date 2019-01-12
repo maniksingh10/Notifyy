@@ -32,6 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -138,15 +141,25 @@ public class LoginStudents extends AppCompatActivity {
                 }else{
                     radioButton = (RadioButton) findViewById(selectedId);
                     yer = radioButton.getText().toString();
+
                     if(task.isSuccessful()){
                         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                             @Override
                             public void onComplete(Task<InstanceIdResult> task) {
                                 if(task.isSuccessful()){
+                                    int iyer = 0;
+                                    if(yer.equals("1st Year")){
+                                        iyer = 1;
+                                    }else if(yer.equals("2nd Year")){
+                                        iyer = 2;
+                                    }else if(yer.equals("3rd Year")){
+                                        iyer = 3;
+                                    }
                                     String key = databaseReference.push().getKey();
-                                    UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken(),Build.MODEL,yer,System.currentTimeMillis());
+                                    UserInfo userInfo = new UserInfo(name, couse,"+91"+mobile,task.getResult().getToken(),Build.MODEL,String.valueOf(iyer),
+                                            System.currentTimeMillis(),0,new SimpleDateFormat("dd-MMM HH:mm", Locale.getDefault()).format(new Date()));
 
-                                    databaseReference.child(couse).child("+91"+mobile).setValue(userInfo);
+                                    databaseReference.child("+91"+mobile).setValue(userInfo);
 
                                     Intent intent = new Intent(LoginStudents.this, MainActivity.class);
                                     startActivity(intent);
@@ -163,7 +176,8 @@ public class LoginStudents extends AppCompatActivity {
     }
 
     private void sendverifycode(String phone) {
-        progressDialog.setTitle("Please Wait.....Don't Close!!!");
+
+        progressDialog.setTitle("Please Wait.....Don't Tap or Close!!!");
         progressDialog.show();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phone, 60, TimeUnit.SECONDS, TaskExecutors.MAIN_THREAD, mCallBack
