@@ -1,26 +1,14 @@
 package com.example.msnotify.notify;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.SimpleOnItemTouchListener;
-
-import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +18,6 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
 
     private List<Info> list = new ArrayList<>();
     private Context context;
-    private int mExpandedPosition = -1;
-    private int previousExpandedPosition = -1;
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("notice");
 
 
     public Recycle(Context context, List<Info> infoList) {
@@ -103,16 +88,8 @@ public class Recycle extends RecyclerView.Adapter<Recycle.ViewHolder> {
             tvdes = v.findViewById(R.id.tvmain);
             tvyear = v.findViewById(R.id.tvyear);
             itemIimage = v.findViewById(R.id.itemimg);
-
-
         }
-
-
     }
-
-
-
-
 }
 
 

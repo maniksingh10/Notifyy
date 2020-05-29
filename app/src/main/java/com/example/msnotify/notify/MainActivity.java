@@ -3,6 +3,19 @@ package com.example.msnotify.notify;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.util.Linkify;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -11,24 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Bundle;
-import android.text.util.Linkify;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -50,14 +46,14 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
 
-    private Button btntimetable,btnteacher,btnstudent,btnsyll,btnatten;
-    private DatabaseReference appinfo,teachverify;
+    private Button btntimetable, btnteacher, btnstudent, btnsyll, btnatten;
+    private DatabaseReference appinfo, teachverify;
     private ConstraintLayout mainroot;
     private ProgressBar progressBar;
     private int stime;
     private int ttime;
     private String versionName;
-    private String state;
+    private String state, timetable1, timetable2;
     private String quote;
     private TextView alertyv;
 
@@ -153,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     state = myInfo.getState();
                     quote = myInfo.getQuote();
                     quote = myInfo.getQuote();
+                    timetable1 = myInfo.getTimetable1();
+                    timetable2 = myInfo.getTimetable2();
                     versionName = myInfo.getVer();
                 }
                 progressBar.setVisibility(View.GONE);
@@ -216,30 +214,18 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
 
-                        final CharSequence[] options = {"Computer, Electronics", "Automobile, Mechanical, Civil"};
+                        final CharSequence[] options = {"Computer, Electronics, Electrical", "Automobile, Mechanical, Civil"};
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                         builder.setTitle("Branch");
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int item) {
-                                if (options[item].equals("Computer, Electronics")) {
+                                if (options[item].equals("Computer, Electronics, Electrical")) {
                                     dialog.dismiss();
-
-                                    AlertDialog windowAnimations;
-                                    AlertDialog.Builder imageDialog = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Black_NoTitleBar);
-                                    LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-                                    View layout = inflater.inflate(R.layout.custom_fullimage_dialog,
-                                            (ViewGroup) findViewById(R.id.layout_root));
-                                    PhotoView image = layout.findViewById(R.id.photo_view);
-                                    Glide.with(MainActivity.this).load("https://firebasestorage.googleapis.com/v0/b/notify-f6631.appspot.com/o/uploads%2F1539942491698.jpg?alt=media&token=e5724fcc-6833-4dad-a6de-3e87f0b23232").into(image);
-                                    imageDialog.setView(layout);
-                                    windowAnimations = imageDialog.create();
-                                    windowAnimations.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
-                                    windowAnimations.show();
+                                    showTimetable(timetable1);
                                 } else if (options[item].equals("Automobile, Mechanical, Civil")) {
                                     dialog.dismiss();
-
+                                    showTimetable(timetable2);
                                 }
                             }
                         });
@@ -259,6 +245,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void showTimetable(String a) {
+
+        AlertDialog windowAnimations;
+        AlertDialog.Builder imageDialog = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Black_NoTitleBar);
+        LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        View layout = inflater.inflate(R.layout.custom_fullimage_dialog,
+                (ViewGroup) findViewById(R.id.layout_root));
+        PhotoView image = layout.findViewById(R.id.photo_view);
+        Glide.with(MainActivity.this).load(a).into(image);
+        imageDialog.setView(layout);
+        windowAnimations = imageDialog.create();
+        windowAnimations.getWindow().getAttributes().windowAnimations = R.style.dialog_animation;
+        windowAnimations.show();
     }
 
     public void openSite(String u) {

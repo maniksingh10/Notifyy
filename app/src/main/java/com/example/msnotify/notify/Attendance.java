@@ -1,20 +1,17 @@
 package com.example.msnotify.notify;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,6 +57,7 @@ public class Attendance extends AppCompatActivity {
                     total_attend = totalAttend.getTotalAtttendd();
                     tv_total_attend.setText(String.valueOf(total_attend));
                 }
+                gotTotalAttend();
             }
 
             @Override
@@ -71,6 +69,16 @@ public class Attendance extends AppCompatActivity {
 
         usersRef = FirebaseDatabase.getInstance().getReference("users");
 
+
+        addAttend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddDialog();
+            }
+        });
+    }
+
+    private void gotTotalAttend() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(stu_mobile);
         if (reference != null) {
             reference.addValueEventListener(new ValueEventListener() {
@@ -80,7 +88,7 @@ public class Attendance extends AppCompatActivity {
                     if (stuAttendance != null) {
                         String up = stuAttendance.getDate_attendace();
                         student_total_atten = stuAttendance.getAttendance();
-                        double percentage = (student_total_atten * 100) / total_attend;
+                        double percentage = (double) (student_total_atten * 100) / total_attend;
 
                         if (student_total_atten <= total_attend) {
                             tv_stu_attend.setText(String.valueOf(student_total_atten));
@@ -107,15 +115,7 @@ public class Attendance extends AppCompatActivity {
                 }
             });
         }
-
-        addAttend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddDialog();
-            }
-        });
     }
-
 
     private void showAddDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -123,8 +123,7 @@ public class Attendance extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_add_attendance, null);
         dialogBuilder.setView(dialogView);
-        final EditText editText = (EditText)
-                dialogView.findViewById(R.id.editText);
+        final EditText editText = dialogView.findViewById(R.id.editText);
         editText.requestFocus();
         Button button = dialogView.findViewById(R.id.btn_attend);
         final AlertDialog alertDialog = dialogBuilder.create();

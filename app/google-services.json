@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "751880272732-8lu3f6a8qc5omfm7tvp69qu1mtsjvb6u.apps.googleusercontent.com",
+          "client_id": "751880272732-kgrk4ogv9h88opp2qkgcpstq3nkje8vv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.msnotify.notify",
-            "certificate_hash": "64e6227b1f729825c9e0e1b6afaa18c6304dd348"
+            "certificate_hash": "0e9b32d1d05364de701a7c4e6495cd602038eb91"
+          }
+        },
+        {
+          "client_id": "751880272732-qkdtcbu1adets7gnpu94dl6bn9flfi84.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.msnotify.notify",
+            "certificate_hash": "b25897657481d49dfb096347930ffe1f65f30b84"
           }
         },
         {
@@ -31,11 +39,11 @@
           }
         },
         {
-          "client_id": "751880272732-qkdtcbu1adets7gnpu94dl6bn9flfi84.apps.googleusercontent.com",
+          "client_id": "751880272732-8lu3f6a8qc5omfm7tvp69qu1mtsjvb6u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.msnotify.notify",
-            "certificate_hash": "b25897657481d49dfb096347930ffe1f65f30b84"
+            "certificate_hash": "64e6227b1f729825c9e0e1b6afaa18c6304dd348"
           }
         },
         {
@@ -49,20 +57,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "751880272732-e0sre80adbn9rq0fiav53ncognetu7dv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

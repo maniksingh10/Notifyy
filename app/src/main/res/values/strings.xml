@@ -24,7 +24,7 @@
     <string name="close">Close</string>
     <array name="bran">
         <item>Computer</item>
-        <item>Electric</item>
+        <item>Electrical</item>
         <item>Civil</item>
         <item>Automobile</item>
         <item>Mechanical</item>
